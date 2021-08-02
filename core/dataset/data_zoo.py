@@ -1,7 +1,7 @@
-import image_caption
-import image_folder
+from . import image_caption
+from . import image_folder
 
-# 如果添加了新的数据集代码，请自行扩充此字典
+# 如果添加了新的数据集代码，请自行扩充此字典(导入新增数据集, 并添加在字典里)
 # 此字典将被用于建立数据集索引，可根据名称直接加载数据集
 dataset_dict = {
     "image_caption": image_caption,

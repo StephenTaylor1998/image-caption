@@ -73,7 +73,7 @@ if __name__ == '__main__':
     from torch.utils.data import DataLoader
     # 测试CSV读取是否正确
     print("---"*20, "process_csv", "---"*20)
-    data = process_csv("../../dataset/demo/train_labels.csv")
+    data = process_csv("../../dataset/image_caption/demo/train_labels.csv")
     print(data[0])
     print(data[1])
 

@@ -1,8 +1,16 @@
 from core.dataset.data_zoo import get_data_by_name
 
 
-# a, b, c = get_data_by_name("core.dataset.image_caption")
+if __name__ == '__main__':
 
-a, b, c = get_data_by_name(".image_caption")
+    print("[INFO] Loading Dataset...")
 
-print(a, b, c)
+    train, val, test = get_data_by_name("image_caption")
+
+    print(train, val, test)
+
+    train, val, test = get_data_by_name("image_folder", )
+
+    print(train, val, test)
+
+    print("[INFO] Done.")
