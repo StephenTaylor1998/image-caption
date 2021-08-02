@@ -40,7 +40,8 @@ def train(train_loader, model, criterion, optimizer, epoch, args):
         loss = criterion(output, target)
 
         # measure accuracy and record loss
-        acc1, acc5 = accuracy(output, target, topk=(1, 5))
+        k_top5 = 5 if args.classes > 5 else args.classes
+        acc1, acc5 = accuracy(output, target, topk=(1, k_top5))
         losses.update(loss.item(), images.size(0))
         top1.update(acc1[0], images.size(0))
         top5.update(acc5[0], images.size(0))
@@ -84,7 +85,8 @@ def validate(val_loader, model, criterion, args):
             loss = criterion(output, target)
 
             # measure accuracy and record loss
-            acc1, acc5 = accuracy(output, target, topk=(1, 5))
+            k_top5 = 5 if args.classes > 5 else args.classes
+            acc1, acc5 = accuracy(output, target, topk=(1, k_top5))
             losses.update(loss.item(), images.size(0))
             top1.update(acc1[0], images.size(0))
             top5.update(acc5[0], images.size(0))
@@ -103,10 +105,10 @@ def validate(val_loader, model, criterion, args):
     return top1.avg
 
 
-def save_checkpoint(state, is_best, filename='data/checkpoint.pth.tar'):
+def save_checkpoint(state, is_best, filename='weights/checkpoint.pth.tar'):
     torch.save(state, filename)
     if is_best:
-        shutil.copyfile(filename, 'data/model_best.pth.tar')
+        shutil.copyfile(filename, 'weights/model_best.pth.tar')
 
 
 class AverageMeter(object):

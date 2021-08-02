@@ -12,7 +12,7 @@ def copy_weights(arg, epoch):
     folder_name = '%s_epoch%d_bs%d_lr%.1e_%s' % \
                   (model_name, epochs, batch_size, learning_rate, datasets)
     # print(folder_name)
-    folder_path = os.path.join('./data/weights', folder_name)
+    folder_path = os.path.join('./weights', folder_name)
     # print('making dir ', folder_path)
     os.makedirs(folder_path, exist_ok=True)
 
@@ -21,9 +21,9 @@ def copy_weights(arg, epoch):
     model_best_name = 'model_best.pth.tar'
 
     print("copy file from %s to %s" % (
-        os.path.join('./data', origin_checkpoint),
+        os.path.join('./weights', origin_checkpoint),
         os.path.join(folder_path, new_checkpoint)))
-    shutil.copyfile(os.path.join('./data', origin_checkpoint),
+    shutil.copyfile(os.path.join('./weights', origin_checkpoint),
                     os.path.join(folder_path, new_checkpoint))
 
     # print("copy file from %s to %s" % (
