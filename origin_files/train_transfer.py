@@ -38,14 +38,14 @@ def evalute(model, loader):
 
 
 def main():
-    # model = ResNet18(5).to(device)
+    # models = ResNet18(5).to(device)
     trained_model = resnet18(pretrained=True)
     model = nn.Sequential(*list(trained_model.children())[:-1],  # [b, 512, 1, 1]
                           Flatten(),  # [b, 512, 1, 1] => [b, 512]
                           nn.Linear(512, 5)
                           ).to(device)
     # x = torch.randn(2, 3, 224, 224)
-    # print(model(x).shape)
+    # print(models(x).shape)
 
     optimizer = optim.Adam(model.parameters(), lr=lr)
     criteon = nn.CrossEntropyLoss()

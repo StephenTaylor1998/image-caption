@@ -32,6 +32,7 @@ def process_csv(scv_path):
     return data_merge
 
 
+# 文本数据需要进行向量化，此处还未实现
 class ImageCaption(Dataset):
     def __init__(self, data_root, transform):
         super(ImageCaption, self).__init__()
@@ -51,6 +52,21 @@ class ImageCaption(Dataset):
 
     def __len__(self):
         return len(self.data_list)
+
+
+def train_dataset(**kwargs):
+    # 请自行添加
+    return NotImplemented
+
+
+def val_dataset(**kwargs):
+    # 请自行添加
+    return NotImplemented
+
+
+def test_dataset(**kwargs):
+    # 请自行添加
+    return NotImplemented
 
 
 if __name__ == '__main__':
@@ -77,3 +93,4 @@ if __name__ == '__main__':
     for image, label in my_data_loader:
         print(image.shape)
         print(label)
+    print("[INFO] 请自行添加代码")
