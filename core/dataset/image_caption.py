@@ -1,9 +1,19 @@
 import os
 import pandas
+import torch
 from PIL import Image
 from torch.utils.data import Dataset
 from torchvision.transforms import transforms
 
+from core.dataset.tokenizer import BasicTokenizer
+
+
+my_transform = transforms.Compose([
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                 std=[0.229, 0.224, 0.225])
+        ])
 
 def process_csv(scv_path):
     # 1.读取CSV文件
@@ -34,11 +44,12 @@ def process_csv(scv_path):
 
 # 文本数据需要进行向量化，此处还未实现
 class ImageCaption(Dataset):
-    def __init__(self, data_root, transform):
+    def __init__(self, data_root, transform, vocab_path):
         super(ImageCaption, self).__init__()
         self.data_root = data_root
         self.data_list = process_csv(os.path.join(data_root, "train_labels.csv"))
         self.transform = transform
+        self.tokenizer = BasicTokenizer(vocab_path)
 
     def __getitem__(self, idx):
         # 拼接图片完整路径
@@ -47,50 +58,53 @@ class ImageCaption(Dataset):
         image = Image.open(image_path)
         # 通过transform做变换（对应数据预处理）
         image_tensor = self.transform(image)
-        # 返回 图片(已处理) 和 标签(未处理, 这里截取长度为100用于测试)
-        return image_tensor, str(self.data_list[idx][1])[:100]
+        # todo: 返回 图片(已处理) 和 标签(简单处理, 这里截取长度为10用于测试)
+        token = self.tokenizer.tokenize(str(self.data_list[idx][1])[:10])
+        token = torch.tensor(token, dtype=torch.long)
+        return image_tensor, token
 
     def __len__(self):
         return len(self.data_list)
 
 
-def train_dataset(**kwargs):
-    # 请自行添加
-    return NotImplemented
+#
+def train_dataset(data_dir, transform=my_transform, vocab_path="dataset/image_caption/basic_vocab.txt", **kwargs):
+    train_dir = os.path.join(data_dir, 'train')
+    return ImageCaption(train_dir, transform, vocab_path)
 
 
-def val_dataset(**kwargs):
-    # 请自行添加
-    return NotImplemented
+def val_dataset(data_dir, transform=my_transform, vocab_path="dataset/image_caption/basic_vocab.txt", **kwargs):
+    val_dir = os.path.join(data_dir, 'demo')
+    return ImageCaption(val_dir, transform, vocab_path)
 
 
-def test_dataset(**kwargs):
-    # 请自行添加
-    return NotImplemented
+def test_dataset(data_dir, transform=my_transform, vocab_path="dataset/image_caption/basic_vocab.txt", **kwargs):
+    test_dir = os.path.join(data_dir, 'demo')
+    return ImageCaption(test_dir, transform, vocab_path)
 
 
 if __name__ == '__main__':
     from torch.utils.data import DataLoader
     # 测试CSV读取是否正确
+    import os
+    os.system("pwd")
     print("---"*20, "process_csv", "---"*20)
-    data = process_csv("../../dataset/image_caption/demo/train_labels.csv")
+    data = process_csv("/home/aistudio/Desktop/remote/image-caption/dataset/image_caption/demo/train_labels.csv")
     print(data[0])
     print(data[1])
 
     # 测试数据集读取是否正确
     print("---" * 20, "ImageCaption", "---" * 20)
-    my_transform = transforms.Compose([
-            transforms.Resize((224, 224)),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                 std=[0.229, 0.224, 0.225])
-        ])
 
-    my_dataset = ImageCaption("../../dataset/demo/", my_transform)
+    # my_dataset = ImageCaption("../../dataset/image_caption/demo/", my_transform)
+    my_dataset = train_dataset("../../dataset/image_caption/", my_transform,
+                               vocab_path="../../dataset/image_caption/basic_vocab.txt")
     print(my_dataset)
     my_data_loader = DataLoader(my_dataset, batch_size=8, shuffle=True, num_workers=1)
 
     for image, label in my_data_loader:
         print(image.shape)
-        print(label)
+        print(label.shape)
+
+        break
     print("[INFO] 请自行添加代码")
